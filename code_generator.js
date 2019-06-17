@@ -40,19 +40,18 @@ function CodeGenerator(cppTmpl) {
 
 CodeGenerator.prototype.genFromJSONObj = function (jsonObj) {
     const fileBaseName = "file_base_name";
-    let tmplNamespace = 'GX' + toPascal(fileBaseName);
 
     this.preprocessJSON(jsonObj);
 
     const structContent = this.genHeaderStruct(jsonObj);
     const headerContent = this.cppTmpl.genHeaderFile(fileBaseName,
-        tmplNamespace, structContent);
+        structContent);
 
     const elemContent = this.genSourceElem(jsonObj);
     const sourceContent = this.cppTmpl.genSourceFile(fileBaseName,
-        tmplNamespace, elemContent);
+        elemContent);
 
-    return headerContent + sourceContent;
+    return headerContent + "\n//cpp\n" + sourceContent;
 };
 
 CodeGenerator.prototype.preprocessJSON = function (jsonObj) {

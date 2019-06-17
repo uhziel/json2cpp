@@ -4,16 +4,13 @@ let cppTmpl = {};
 
 //////////////////////////////////////////////////
 // HeaderFile
-cppTmpl.genHeaderFile = (fileBaseName, tmplNamespace, content) =>
+cppTmpl.genHeaderFile = (fileBaseName, content) =>
 `#ifndef __${fileBaseName}__GXHEADER__
 #define __${fileBaseName}__GXHEADER__
 
 #include "gx_utils.h"
 #include "cJSON.h"
-
-namespace ${tmplNamespace} {
 ${content}
-}
 
 #endif
 `;
@@ -48,12 +45,10 @@ cppTmpl.genHeaderFileStructVar = (type, variable) =>
 
 //////////////////////////////////////////////////
 // SourceFile
-cppTmpl.genSourceFile = (fileBaseName, tmplNamespace, content) =>
+cppTmpl.genSourceFile = (fileBaseName, content) =>
 `#include "${fileBaseName}.config.h"
 
-namespace ${tmplNamespace} {
 ${content}
-}
 `;
 
 cppTmpl.genSourceFileCtor = (elemStructName, content) => `
