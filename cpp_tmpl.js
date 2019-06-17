@@ -67,7 +67,7 @@ cppTmpl.genSourceFileCtorVar = (variable, defaultValue, isFirst) => {
 };
 
 cppTmpl.genSourceFileLoad = (elemStructName, content) => `
-void ${elemStructName}::Load(cJSON* node)
+void ${elemStructName}::LoadFrom(cJSON* node)
 {
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
@@ -132,6 +132,6 @@ void Config::Print(std::string& out) const
 		return;
 	}
 	out = text;
-	free(text);
+	free(static_cast<void*>(text));
 }
 `;

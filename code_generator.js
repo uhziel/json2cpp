@@ -117,7 +117,7 @@ CodeGenerator.prototype.genHeaderStruct = function (jsonObj, jsonKey) {
     if (!jsonKey) {
         content += this.cppTmpl.genHeaderFileStructRoot(varContent);
     } else {
-        content += this.cppTmpl.genHeaderFileStruct(toPascal(jsonKey), varContent);
+        content += this.cppTmpl.genHeaderFileStruct(toPascal(jsonObj.__type__), varContent);
     }
 
     return content;
@@ -154,9 +154,9 @@ CodeGenerator.prototype.genSourceElem = function (jsonObj, jsonKey) {
         content += this.cppTmpl.genSourceFileParse();
         content += this.cppTmpl.genSourceFilePrint();
     } else {
-        content += this.cppTmpl.genSourceFileCtor(toPascal(jsonKey), constructorContent);
-        content += this.cppTmpl.genSourceFileLoad(toPascal(jsonKey), loadContent);
-        content += this.cppTmpl.genSourceFileCreatecJSON(toPascal(jsonKey), createcJSONContent);
+        content += this.cppTmpl.genSourceFileCtor(toPascal(jsonObj.__type__), constructorContent);
+        content += this.cppTmpl.genSourceFileLoad(toPascal(jsonObj.__type__), loadContent);
+        content += this.cppTmpl.genSourceFileCreatecJSON(toPascal(jsonObj.__type__), createcJSONContent);
     }
 
     return content;
