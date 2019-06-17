@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>json2cpp</title>
-    <link type="text/css" rel="stylesheet" href="third_party/xonomy-3.5.0/xonomy.css" />
 </head>
 
 <body>
-    <form onsubmit="genCpp(this.jsonInput.value); return false;" id="jsonForm">
+    <form onsubmit="exec(this.jsonInput.value); return false;" id="jsonForm">
         <div>
             <label for="jsonInput">json输入</label>
-            <textarea name="jsonInput" id="jsonInput" cols="30" rows="10"></textarea>
+            <textarea name="jsonInput" id="jsonInput" cols="80" rows="40"></textarea>
         </div>
         <div>
             <input type="submit" value="生成">
@@ -19,8 +18,10 @@
     </form>
     <div>
         <label for="cppOutput">cpp代码输出</label>
-        <textarea name="cppOutput" id="cppOutput" cols="30" rows="10"></textarea>
+        <textarea name="cppOutput" id="cppOutput" cols="80" rows="40"></textarea>
     </div>
+    <script src="cpp_tmpl.js" type="text/javascript" charset="utf-8"></script>
+    <script src="code_generator.js" type="text/javascript" charset="utf-8"></script>
     <script src="main.js" type="text/javascript" charset="utf-8"></script>
 </body>
 

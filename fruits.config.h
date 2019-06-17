@@ -40,7 +40,7 @@ struct Config
     void Load(cJSON* node);
     cJSON* CreatecJSON() const;
     void Parse(const char* content);
-    void Print(std::string& out);
+    void Print(std::string& out) const;
 };
 
 }

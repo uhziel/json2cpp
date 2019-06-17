@@ -108,7 +108,7 @@ void Config::Parse(const char* content)
 	cJSON_Delete(root);
 }
 
-void Config::Print(std::string& out)
+void Config::Print(std::string& out) const
 {
 	cJSON* root = CreatecJSON();
 	if (NULL == root)
