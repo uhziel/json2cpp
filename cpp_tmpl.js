@@ -32,7 +32,7 @@ struct Config
     Config();
 
 ${content}
-    void Load(cJSON* node);
+    void LoadFrom(cJSON* node);
     cJSON* CreatecJSON() const;
     void Parse(const char* content);
     void Print(std::string& out) const;
@@ -46,8 +46,7 @@ cppTmpl.genHeaderFileStructVar = (type, variable) =>
 //////////////////////////////////////////////////
 // SourceFile
 cppTmpl.genSourceFile = (fileBaseName, content) =>
-`#include "${fileBaseName}.config.h"
-
+`#include "${fileBaseName}.h"
 ${content}
 `;
 
@@ -107,7 +106,7 @@ void Config::Parse(const char* content)
 	}
 
 	*this = Config();
-	Load(root);
+	LoadFrom(root);
 	cJSON_Delete(root);
 }
 `;
@@ -121,12 +120,12 @@ void Config::Print(std::string& out) const
 		return;
 	}
 
-	const char* text = cJSON_PrintUnformattedForGBK(root);
+	const char* text = cJSON_PrintUnformatted(root);
 	if (NULL == text)
 	{
 		return;
 	}
 	out = text;
-	free(static_cast<void*>(text));
+	free((void*)(text));
 }
 `;

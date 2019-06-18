@@ -1,10 +1,8 @@
-#ifndef __fruits__GXHEADER__
-#define __fruits__GXHEADER__
+#ifndef __file_base_name__GXHEADER__
+#define __file_base_name__GXHEADER__
 
 #include "gx_utils.h"
 #include "cJSON.h"
-
-namespace GXFruits {
 
 struct Energy
 {
@@ -22,12 +20,12 @@ struct Fruit
 {
     Fruit();
 
-    Energy energy;
     std::string name;
     int price;
     GXDateTime per_sale_time;
+    Energy energy;
 
-    void Load(cJSON* node);
+    void LoadFrom(cJSON* node);
     cJSON* CreatecJSON() const;
 };
 
@@ -35,14 +33,13 @@ struct Config
 {
     Config();
 
-    std::vector<GXShare::Fruit> fruit;
+    std::vector<Fruit> fruits;
 
-    void Load(cJSON* node);
+    void LoadFrom(cJSON* node);
     cJSON* CreatecJSON() const;
     void Parse(const char* content);
     void Print(std::string& out) const;
 };
 
-}
 
 #endif

@@ -70,7 +70,9 @@ CodeGenerator.prototype.preprocessJSON = function (jsonObj) {
             } else if (rawType === "array") {
                 const childObj = this.getArrayChildObject(value);
                 if (childObj) {
-                    childObj.__type__ = this.getTempKey();
+                    if (!childObj.__type__) {
+                        childObj.__type__ = this.getTempKey();
+                    }
                 }
             }
         }

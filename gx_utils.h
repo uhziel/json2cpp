@@ -1,10 +1,10 @@
 #ifndef __GX_UTILS_HEADER__
 #define __GX_UTILS_HEADER__
 
-#include "tinyxml/tinyxml.h"
 #include <string>
 #include <vector>
 #include <ctime>
+#include "cJSON.h"
 
 struct GXDateTime
 {
@@ -32,6 +32,18 @@ inline bool ReadFrom(cJSON* node, const char* name, int& value)
     return true;
 }
 
+inline bool WriteTo(cJSON* node, const char* name, int value)
+{
+	cJSON* item = cJSON_CreateNumber(value);
+	if (item == NULL)
+	{
+		return false;
+	}
+
+	cJSON_AddItemToObject(node, name, item);
+    return true;
+}
+
 inline bool ReadFrom(cJSON* node, const char* name, std::string& value)
 {
     if (NULL == node)
@@ -45,6 +57,18 @@ inline bool ReadFrom(cJSON* node, const char* name, std::string& value)
     }
 
     value = node->valuestring;
+    return true;
+}
+
+inline bool WriteTo(cJSON* node, const char* name, const std::string& value)
+{
+	cJSON* item = cJSON_CreateString(value.c_str());
+	if (item == NULL)
+	{
+		return false;
+	}
+
+	cJSON_AddItemToObject(node, name, item);
     return true;
 }
 
@@ -76,7 +100,7 @@ inline bool WriteTo(cJSON* node, const char* name, double value)
     return true;
 }
 
-inline bool ReadFrom(cJSON* node, const char* name, const GXDateTime& value)
+inline bool ReadFrom(cJSON* node, const char* name, GXDateTime& value)
 {
     if (NULL == node)
     {
@@ -97,6 +121,18 @@ inline bool ReadFrom(cJSON* node, const char* name, const GXDateTime& value)
     return true;
 }
 
+inline bool WriteTo(cJSON* node, const char* name, const GXDateTime& value)
+{
+	cJSON* item = cJSON_CreateString(value.str.c_str());
+	if (item == NULL)
+	{
+		return false;
+	}
+
+	cJSON_AddItemToObject(node, name, item);
+    return true;
+}
+
 template <typename T>
 inline bool ReadFrom(cJSON* node, const char* name, T& value)
 {
@@ -110,7 +146,7 @@ inline bool ReadFrom(cJSON* node, const char* name, T& value)
         return false;
     }
 
-    value.Load(node);
+    value.LoadFrom(node);
     return true;
 }
 
@@ -143,7 +179,7 @@ inline bool ReadFrom(cJSON* node, const char* name, std::vector<T>& value)
     for (cJSON* c = node->child; c != NULL; c = c->next)
     {
         T t;
-        t.Load(c);
+        t.LoadFrom(c);
         value.push_back(t);
     }
     return false;
@@ -163,7 +199,7 @@ inline bool WriteTo(cJSON* node, const char* name, const std::vector<T>& value)
         return false;
     }
 
-    for (std::vector<T>::const_iteator itr = value.begin();
+    for (typename std::vector<T>::const_iterator itr = value.begin();
         itr != value.end(); itr++)
     {
         cJSON* obj = itr->CreatecJSON();
@@ -172,6 +208,7 @@ inline bool WriteTo(cJSON* node, const char* name, const std::vector<T>& value)
             cJSON_AddItemToArray(item, obj);
         }
     }
+    cJSON_AddItemToObject(node, name, item);
     return true;
 }
 

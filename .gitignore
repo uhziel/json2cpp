@@ -1,0 +1,7 @@
+json2cpp_bin*
+Debug
+Release
+*.ncb
+*.suo
+*.vcproj.*
+ipch

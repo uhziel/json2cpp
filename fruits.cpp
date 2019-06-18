@@ -1,14 +1,12 @@
-#include "fruits.config.h"
-
-namespace GXFruits {
+#include "fruits.h"
 
 Energy::Energy()
-    : carbohydrates(0)
-    , fat(0)
-    , protein(0)
+    : carbohydrates(22.84)
+    , fat(0.33)
+    , protein(1.09)
 {}
 
-void Energy::Load(cJSON* node)
+void Energy::LoadFrom(cJSON* node)
 {
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
@@ -28,25 +26,25 @@ cJSON* Energy::CreatecJSON() const
 
 	::WriteTo(object, "carbohydrates", carbohydrates);
 	::WriteTo(object, "fat", fat);
-	::WirteTo(object, "protein", protein);
+	::WriteTo(object, "protein", protein);
 
 	return object;
 }
 
 Fruit::Fruit()
-    : name("")
-    , price(1)
-    , per_sale_time("")
+    : name("香蕉")
+    , price(10)
+    , per_sale_time("2018-12-27 00:11:01")
 {}
 
-void Fruit::Load(cJSON* node)
+void Fruit::LoadFrom(cJSON* node)
 {
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
-		if (::ReadFrom(c, "energy", energy)) continue;
 		if (::ReadFrom(c, "name", name)) continue;
 		if (::ReadFrom(c, "price", price)) continue;
 		if (::ReadFrom(c, "per_sale_time", per_sale_time)) continue;
+		if (::ReadFrom(c, "energy", energy)) continue;
 	}
 }
 
@@ -58,10 +56,10 @@ cJSON* Fruit::CreatecJSON() const
 		return NULL;
 	}
 
-	::WriteTo(object, "energy", energy);
 	::WriteTo(object, "name", name);
 	::WriteTo(object, "price", price);
 	::WriteTo(object, "per_sale_time", per_sale_time);
+	::WriteTo(object, "energy", energy);
 
 	return object;
 }
@@ -69,11 +67,11 @@ cJSON* Fruit::CreatecJSON() const
 Config::Config()
 {}
 
-void Config::Load(cJSON* node)
+void Config::LoadFrom(cJSON* node)
 {
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
-		if (::ReadFrom(c, "fruit", fruit)) continue;
+		if (::ReadFrom(c, "fruits", fruits)) continue;
 	}
 }
 
@@ -85,17 +83,17 @@ cJSON* Config::CreatecJSON() const
 		return NULL;
 	}
 
-	::WriteTo(object, "fruit", fruit);
+	::WriteTo(object, "fruits", fruits);
 
 	return object;
 }
 
 void Config::Parse(const char* content)
 {
-    if (NULL == content)
-    {
-        return;
-    }
+	if (NULL == content)
+	{
+		return;
+	}
 
 	cJSON* root = cJSON_Parse(content);
 	if (NULL == root)
@@ -104,7 +102,7 @@ void Config::Parse(const char* content)
 	}
 
 	*this = Config();
-	Load(root);
+	LoadFrom(root);
 	cJSON_Delete(root);
 }
 
@@ -116,13 +114,11 @@ void Config::Print(std::string& out) const
 		return;
 	}
 
-	const char* text = cJSON_PrintUnformattedForGBK(root);
+	const char* text = cJSON_PrintUnformatted(root);
 	if (NULL == text)
 	{
 		return;
 	}
 	out = text;
-	free(text);
-}
-
+	free((void*)(text));
 }
