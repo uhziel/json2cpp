@@ -11,6 +11,18 @@ function toPascal(underscore) {
     });
 }
 
+function isInt(str) {
+    return str.match(/^[-+]?\d+$/);
+}
+
+function isDouble(str) {
+    return str.match(/^[-+]?\d+\.\d+$/);
+}
+
+function isBool(str) {
+    return str === "true" || str === "false";
+}
+
 function isDatetime(str) {
     return str.match(/^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/) !== null;
 }
@@ -140,7 +152,8 @@ CodeGenerator.prototype.genSourceElem = function (jsonObj, jsonKey) {
             }
 
             if (typeInfo.rawType !== "object" && typeInfo.rawType !== "array") {
-                constructorContent += this.cppTmpl.genSourceFileCtorVar(typeInfo.variableName, value, isFirst);
+                constructorContent += this.cppTmpl.genSourceFileCtorVar(typeInfo.variableName,
+                    typeInfo.variableValue, isFirst);
                 isFirst = false;
             }
             loadContent += this.cppTmpl.genSourceFileLoadVar(typeInfo.variableName);
@@ -209,10 +222,11 @@ CodeGenerator.prototype.getTypeInfo = function (key, value) {
         rawType: rawType,
         variableType: rawType,
         variableName: key,
+        variableValue: value,
         subStruct: null
     };
     if (typeInfo.rawType === "object") {
-        typeInfo.variableType = toPascal(value.__type__);//toPascal(key); //todo
+        typeInfo.variableType = toPascal(value.__type__);
         typeInfo.subStruct = {
             jsonObj: value,
             key: key
@@ -231,8 +245,19 @@ CodeGenerator.prototype.getTypeInfo = function (key, value) {
         } else {
             typeInfo.variableType = "double";
         }
+    } else if (typeInfo.rawType === "boolean") {
+        typeInfo.variableType = "bool";
     } else if (typeInfo.rawType === "string") {
-        if (isDatetime(value)) {
+        if (isInt(value)) {
+            typeInfo.variableType = "int";
+            typeInfo.variableValue = parseInt(value);
+        } else if (isDouble(value)) {
+            typeInfo.variableType = "double";
+            typeInfo.variableValue = parseFloat(value);
+        } else if (isBool(value)) {
+            typeInfo.variableType = "bool";
+            typeInfo.variableValue = (value === "true");
+        } else if (isDatetime(value)) {
             typeInfo.variableType = "GXDateTime";
         } else {
             typeInfo.variableType = "std::string";

@@ -16,6 +16,39 @@ struct GXDateTime
     time_t value;
 };
 
+inline bool ReadFrom(cJSON* node, const char* name, bool& value)
+{
+    if (NULL == node)
+    {
+        return false;
+    }
+
+    if (strcmp(node->string, name) != 0)
+    {
+        return false;
+    }
+
+    if (cJSON_IsTrue(node)) {
+        value = true;
+    } else {
+        value = false;
+    }
+
+    return true;
+}
+
+inline bool WriteTo(cJSON* node, const char* name, bool value)
+{
+	cJSON* item = value ? cJSON_CreateTrue() : cJSON_CreateFalse();
+	if (item == NULL)
+	{
+		return false;
+	}
+
+	cJSON_AddItemToObject(node, name, item);
+    return true;
+}
+
 inline bool ReadFrom(cJSON* node, const char* name, int& value)
 {
     if (NULL == node)

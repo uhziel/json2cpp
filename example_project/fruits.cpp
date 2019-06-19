@@ -64,6 +64,45 @@ cJSON* Fruit::CreatecJSON() const
 	return object;
 }
 
+Demo::Demo()
+    : demo_bool(true)
+    , demo_int(0)
+    , demo_double(0.1)
+    , demo_str("")
+    , demo_time("2018-12-27 00:11:01")
+{}
+
+void Demo::LoadFrom(cJSON* node)
+{
+	for (cJSON* c = node->child; c != NULL; c = c->next)
+	{
+		if (::ReadFrom(c, "demo_bool", demo_bool)) continue;
+		if (::ReadFrom(c, "demo_int", demo_int)) continue;
+		if (::ReadFrom(c, "demo_double", demo_double)) continue;
+		if (::ReadFrom(c, "demo_str", demo_str)) continue;
+		if (::ReadFrom(c, "demo_time", demo_time)) continue;
+		//if (::ReadFrom(c, "demo_array", demo_array)) continue;
+	}
+}
+
+cJSON* Demo::CreatecJSON() const
+{
+	cJSON* object = cJSON_CreateObject();
+	if (object == NULL)
+	{
+		return NULL;
+	}
+
+	::WriteTo(object, "demo_bool", demo_bool);
+	::WriteTo(object, "demo_int", demo_int);
+	::WriteTo(object, "demo_double", demo_double);
+	::WriteTo(object, "demo_str", demo_str);
+	::WriteTo(object, "demo_time", demo_time);
+	//::WriteTo(object, "demo_array", demo_array);
+
+	return object;
+}
+
 Config::Config()
 {}
 
@@ -72,6 +111,7 @@ void Config::LoadFrom(cJSON* node)
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
 		if (::ReadFrom(c, "fruits", fruits)) continue;
+		if (::ReadFrom(c, "demo", demo)) continue;
 	}
 }
 
@@ -84,6 +124,7 @@ cJSON* Config::CreatecJSON() const
 	}
 
 	::WriteTo(object, "fruits", fruits);
+	::WriteTo(object, "demo", demo);
 
 	return object;
 }
