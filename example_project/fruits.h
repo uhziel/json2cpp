@@ -11,10 +11,10 @@ struct Energy
     double carbohydrates;
     double fat;
     double protein;
-
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
 };
+
+bool LoadFrom(Energy& value, cJSON* node);
+cJSON* CreatecJSON(const Energy& value);
 
 struct Fruit
 {
@@ -24,10 +24,10 @@ struct Fruit
     int price;
     GXDateTime per_sale_time;
     Energy energy;
-
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
 };
+
+bool LoadFrom(Fruit& value, cJSON* node);
+cJSON* CreatecJSON(const Fruit& value);
 
 struct Demo
 {
@@ -38,11 +38,11 @@ struct Demo
     double demo_double;
     std::string demo_str;
     GXDateTime demo_time;
-    //std::vector<std::vector<int> > demo_array;
-
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
+    std::vector<std::vector<int> > demo_array;
 };
+
+bool LoadFrom(Demo& value, cJSON* node);
+cJSON* CreatecJSON(const Demo& value);
 
 struct Config
 {
@@ -51,10 +51,11 @@ struct Config
     std::vector<Fruit> fruits;
     Demo demo;
 
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
     void Parse(const char* content);
     void Print(std::string& out) const;
 };
+
+bool LoadFrom(Config& value, cJSON* node);
+cJSON* CreatecJSON(const Config& value);
 
 #endif
