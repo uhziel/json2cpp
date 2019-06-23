@@ -20,10 +20,10 @@ struct ${elemStructName}
 {
     ${elemStructName}();
 
-${content}
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
-};
+${content}};
+
+bool LoadFrom(${elemStructName}& value, cJSON* node);
+cJSON* CreatecJSON(const ${elemStructName}& value);
 `;
 
 cppTmpl.genHeaderFileStructRoot = (content) => `
@@ -32,11 +32,12 @@ struct Config
     Config();
 
 ${content}
-    void LoadFrom(cJSON* node);
-    cJSON* CreatecJSON() const;
     void Parse(const char* content);
     void Print(std::string& out) const;
 };
+
+bool LoadFrom(Config& value, cJSON* node);
+cJSON* CreatecJSON(const Config& value);
 `;
 
 cppTmpl.genHeaderFileStructVar = (type, variable) =>
@@ -61,20 +62,21 @@ cppTmpl.genSourceFileCtorVar = (variable, defaultValue, isFirst) => {
 };
 
 cppTmpl.genSourceFileLoad = (elemStructName, content) => `
-void ${elemStructName}::LoadFrom(cJSON* node)
+bool LoadFrom(${elemStructName}& value, cJSON* node)
 {
 	for (cJSON* c = node->child; c != NULL; c = c->next)
 	{
 ${content}	}
+	return true;
 }
 `;
 
 cppTmpl.genSourceFileLoadVar = (variable) =>
-`		if (::ReadFrom(c, "${variable}", ${variable})) continue;
+`		if (::ReadFrom(c, "${variable}", value.${variable})) continue;
 `;
 
 cppTmpl.genSourceFileCreatecJSON = (elemStructName, content) => `
-cJSON* ${elemStructName}::CreatecJSON() const
+cJSON* CreatecJSON(const ${elemStructName}& value)
 {
 	cJSON* object = cJSON_CreateObject();
 	if (object == NULL)
@@ -88,7 +90,7 @@ ${content}
 `;
 
 cppTmpl.genSourceFileCreatecJSONVar = (variable) =>
-`	::WriteTo(object, "${variable}", ${variable});
+`	::WriteTo(object, "${variable}", value.${variable});
 `;
 
 cppTmpl.genSourceFileParse = () => `
@@ -106,7 +108,7 @@ void Config::Parse(const char* content)
 	}
 
 	*this = Config();
-	LoadFrom(root);
+	LoadFrom(*this, root);
 	cJSON_Delete(root);
 }
 `;
@@ -114,7 +116,7 @@ void Config::Parse(const char* content)
 cppTmpl.genSourceFilePrint = () => `
 void Config::Print(std::string& out) const
 {
-	cJSON* root = CreatecJSON();
+	cJSON* root = CreatecJSON(*this);
 	if (NULL == root)
 	{
 		return;
