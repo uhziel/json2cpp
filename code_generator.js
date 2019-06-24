@@ -33,13 +33,13 @@ function getRawType(v) {
     return s.match(/\[object (.*?)\]/)[1].toLowerCase();
 }
 
-function getVectorVaribleType(variableType, depth) {
+function getVectorVariableType(variableType, depth) {
     if (depth <= 0) {
         return `${variableType}`;
     } else if (depth == 1) {
         return `std::vector<${variableType}>`;
     }
-    return `std::vector<${getVectorVaribleType(variableType, depth - 1)} >`;
+    return `std::vector<${getVectorVariableType(variableType, depth - 1)} >`;
 }
 
 /*
@@ -55,15 +55,15 @@ CodeGenerator.prototype.genFromJSONObj = function (jsonObj) {
 
     this.preprocessJSON(jsonObj);
 
-    const structContent = this.genHeaderStruct(jsonObj);
-    const headerContent = this.cppTmpl.genHeaderFile(fileBaseName,
-        structContent);
+    const headerContent = this.genHeaderContent(jsonObj);
+    const header = this.cppTmpl.genHeaderFile(fileBaseName,
+        headerContent);
 
-    const elemContent = this.genSourceElem(jsonObj);
-    const sourceContent = this.cppTmpl.genSourceFile(fileBaseName,
-        elemContent);
+    const sourceContent = this.genSourceContent(jsonObj);
+    const source = this.cppTmpl.genSourceFile(fileBaseName,
+        sourceContent);
 
-    return headerContent + "\n//cpp\n" + sourceContent;
+    return header + "\n//cpp\n" + source;
 };
 
 CodeGenerator.prototype.preprocessJSON = function (jsonObj) {
@@ -110,7 +110,7 @@ CodeGenerator.prototype.getArrayChildObject = function (arrayObj) {
     return childObj;
 }
 
-CodeGenerator.prototype.genHeaderStruct = function (jsonObj, jsonKey) {
+CodeGenerator.prototype.genHeaderContent = function (jsonObj, jsonKey) {
     let content = "";
     let varContent = "";
     for (const key in jsonObj) {
@@ -118,7 +118,7 @@ CodeGenerator.prototype.genHeaderStruct = function (jsonObj, jsonKey) {
             const value = jsonObj[key];
             const typeInfo = this.getTypeInfo(key, value);
             if (typeInfo.subStruct) {
-                content += this.genHeaderStruct(typeInfo.subStruct.jsonObj,
+                content += this.genHeaderContent(typeInfo.subStruct.jsonObj,
                     typeInfo.subStruct.key);
             }
 
@@ -136,7 +136,7 @@ CodeGenerator.prototype.genHeaderStruct = function (jsonObj, jsonKey) {
     return content;
 };
 
-CodeGenerator.prototype.genSourceElem = function (jsonObj, jsonKey) {
+CodeGenerator.prototype.genSourceContent = function (jsonObj, jsonKey) {
     let content = "";
     let constructorContent = "";
     let loadContent = "";
@@ -147,7 +147,7 @@ CodeGenerator.prototype.genSourceElem = function (jsonObj, jsonKey) {
             const value = jsonObj[key];
             const typeInfo = this.getTypeInfo(key, value);
             if (typeInfo.subStruct) {
-                content += this.genSourceElem(typeInfo.subStruct.jsonObj,
+                content += this.genSourceContent(typeInfo.subStruct.jsonObj,
                     typeInfo.subStruct.key);
             }
 
@@ -196,7 +196,7 @@ CodeGenerator.prototype.getArrayTypeInfo = function (v, depth) {
         const typeInfo = this.getTypeInfo(tempKey, item);
 
         const arrayTypeInfo = {
-            variableType: getVectorVaribleType(typeInfo.variableType, depth),
+            variableType: getVectorVariableType(typeInfo.variableType, depth),
             subStruct: {
                 jsonObj: item,
                 key: tempKey
@@ -209,7 +209,7 @@ CodeGenerator.prototype.getArrayTypeInfo = function (v, depth) {
         const typeInfo = this.getTypeInfo("dummy", item);
 
         const arrayTypeInfo = {
-            variableType: getVectorVaribleType(typeInfo.variableType, depth),
+            variableType: getVectorVariableType(typeInfo.variableType, depth),
             subStruct: null
         };
         return arrayTypeInfo;

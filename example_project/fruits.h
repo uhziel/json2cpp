@@ -1,7 +1,7 @@
 #ifndef __file_base_name__GXHEADER__
 #define __file_base_name__GXHEADER__
 
-#include "gx_utils.h"
+#include "json2cpp_utils.h"
 #include "cJSON.h"
 
 struct Energy
