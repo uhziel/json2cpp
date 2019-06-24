@@ -8,7 +8,7 @@ cppTmpl.genHeaderFile = (fileBaseName, content) =>
 `#ifndef __${fileBaseName}__GXHEADER__
 #define __${fileBaseName}__GXHEADER__
 
-#include "gx_utils.h"
+#include "json2cpp_utils.h"
 #include "cJSON.h"
 ${content}
 

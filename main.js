@@ -12,6 +12,12 @@ const testJsonString = `{
                 "carbohydrates": "22.84",
                 "fat": "0.33",
                 "protein": "1.09"
+            },
+            "energy2": {
+                "__type__": "energy",
+                "carbohydrates": "22.84",
+                "fat": "0.33",
+                "protein": "1.09"
             }
         }
     ],

@@ -48,6 +48,7 @@ function getVectorVariableType(variableType, depth) {
 function CodeGenerator(cppTmpl) {
     this.cppTmpl = cppTmpl;
     this.tempTypeAutoId = 0;
+    this.typeArray = [];
 }
 
 CodeGenerator.prototype.genFromJSONObj = function (jsonObj) {
@@ -66,25 +67,33 @@ CodeGenerator.prototype.genFromJSONObj = function (jsonObj) {
     return header + "\n//cpp\n" + source;
 };
 
-CodeGenerator.prototype.preprocessJSON = function (jsonObj) {
+CodeGenerator.prototype.setObjType = function (jsonObj, type) {
     if (!jsonObj.__type__) {
-        jsonObj.__type__ = this.getTempKey();
+        if (!type) {
+            type = this.getTempKey();
+        }
+        jsonObj.__type__ = type;
     }
+    if (this.typeArray.indexOf(jsonObj.__type__) === -1) {
+        this.typeArray.push(jsonObj.__type__);
+    } else {
+        jsonObj.__skip__ = true;
+    }
+}
 
+CodeGenerator.prototype.preprocessJSON = function (jsonObj) {
     for (const key in jsonObj) {
         if (jsonObj.hasOwnProperty(key)) {
             const value = jsonObj[key];
             const rawType = getRawType(value);
             if (rawType === "object") {
-                if (!value.__type__) {
-                    value.__type__ = key;
-                }
+                this.setObjType(value, key);
+                this.preprocessJSON(value);
             } else if (rawType === "array") {
                 const childObj = this.getArrayChildObject(value);
                 if (childObj) {
-                    if (!childObj.__type__) {
-                        childObj.__type__ = this.getTempKey();
-                    }
+                    this.setObjType(childObj, null);
+                    this.preprocessJSON(childObj);
                 }
             }
         }
@@ -112,6 +121,9 @@ CodeGenerator.prototype.getArrayChildObject = function (arrayObj) {
 
 CodeGenerator.prototype.genHeaderContent = function (jsonObj, jsonKey) {
     let content = "";
+    if (jsonObj.__skip__) {
+        return content;
+    }
     let varContent = "";
     for (const key in jsonObj) {
         if (jsonObj.hasOwnProperty(key) && key !== "__type__") {
@@ -138,6 +150,9 @@ CodeGenerator.prototype.genHeaderContent = function (jsonObj, jsonKey) {
 
 CodeGenerator.prototype.genSourceContent = function (jsonObj, jsonKey) {
     let content = "";
+    if (jsonObj.__skip__) {
+        return content;
+    }
     let constructorContent = "";
     let loadContent = "";
     let createcJSONContent = "";
