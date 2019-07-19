@@ -7,6 +7,14 @@
 </head>
 
 <body>
+    <div>
+        使用说明：
+        <ul>
+            <li>"json输入"中填好json串，点击生成后，从"cpp代码输出"中拷贝代码到你的项目</li>
+            <li>你的项目中添加上<a href="https://github.com/uhziel/json2cpp/tree/master/example_project">example_project</a>里的 cJSON.h/cpp、json2cpp_utils.h/cpp </li>
+            <li>使用json2cpp提供的接口来解析json串和打印出json对象的字符串。示例参见 <a href="https://github.com/uhziel/json2cpp/blob/master/example_project/main.cpp">main.cpp</a></li>
+        </ul>
+    </div>
     <form onsubmit="exec(this.jsonInput.value); return false;" id="jsonForm">
         <div>
             <label for="jsonInput">json输入</label>

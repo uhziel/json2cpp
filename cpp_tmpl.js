@@ -5,8 +5,8 @@ let cppTmpl = {};
 //////////////////////////////////////////////////
 // HeaderFile
 cppTmpl.genHeaderFile = (fileBaseName, content) =>
-`#ifndef __${fileBaseName}__GXHEADER__
-#define __${fileBaseName}__GXHEADER__
+`#ifndef __${fileBaseName}__JSON2CPP__
+#define __${fileBaseName}__JSON2CPP__
 
 #include "json2cpp_utils.h"
 #include "cJSON.h"

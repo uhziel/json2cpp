@@ -4,7 +4,7 @@ const testJsonString = `{
     "fruits": [
         {
             "__type__": "fruit",
-            "name": "香蕉",
+            "name": "banana",
             "price": "10",
             "per_sale_time": "2018-12-27 00:11:01",
             "energy": {
